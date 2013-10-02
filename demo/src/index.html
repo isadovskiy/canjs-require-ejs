@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>CanJS-RequireJS-EJS Sample</title>
+    <script type="text/javascript" src="../../lib/require-2.1.8/require.min.js"></script>
+    <script type="text/javascript" src="../../lib/jquery-1.10.1/jquery.min.js"></script>
+    <script type="text/javascript" src="sample/config.js"></script>
+</head>
+<body>
+    <div id="sample"></div>
+    <script type="text/javascript">
+        requirejs(['sample/app'], function (app) {
+            app('#sample');
+        });
+    </script>
+</body>
+</html>
