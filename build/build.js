@@ -4,7 +4,7 @@
     mainConfigFile: '../src/sample/config.js',
     baseUrl: '.',
     paths: {
-        'can/util/library': '../../src/ejs.library'
+        'can/util/optimize': 'plugin/ejs.library'
     },
     modules: [
         {
@@ -12,8 +12,8 @@
             exclude: [
                 'jquery'
             ],
-            include: [
-                'can/util/jquery'
+            excludeShallow: [
+                'can/util/optimize'
             ]
         }
     ],
@@ -24,6 +24,6 @@
 	removeCombined: false,
     preserveLicenseComments: false,
     pragmasOnSave: {
-        optimizeEJS: true
+        //optimizeEJS: true
     }
 })

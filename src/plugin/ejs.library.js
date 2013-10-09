@@ -1,11 +1,4 @@
-define([
-    'can/util/can'
-    //>>includeStart('optimizerRuntime', pragmas.optimizeEJS)
-    ,'can/util/jquery'
-    //>>includeEnd('optimizerRuntime')
-], function (can) {
-
-    //>>excludeStart('optimizerRuntime', pragmas.optimizeEJS)
+define(['can/util/can'], function (can) {
 
     function likeArray(obj) {
         return typeof obj.length == 'number';
@@ -14,6 +7,15 @@ define([
     function flatten(array) {
         return array.length > 0 ? Array.prototype.concat.apply([], array) : array
     }
+
+    can.isFunction = (typeof document !== 'undefined' && typeof document.getElementsByTagName('body') === 'function')
+        ? function (value) {
+        return Object.prototype.toString.call(value) === '[object Function]';
+    }
+        : function (value) {
+        return typeof value === 'function';
+    };
+
 
     // This extend() function is ruthlessly and shamelessly stolen from
     // jQuery 1.8.2:, lines 291-353.
@@ -81,14 +83,6 @@ define([
         return target;
     };
 
-    can.isFunction = (typeof document !== 'undefined' && typeof document.getElementsByTagName('body') === 'function')
-        ? function (value) {
-        return Object.prototype.toString.call(value) === '[object Function]';
-    }
-        : function (value) {
-        return typeof value === 'function';
-    };
-
     can.map = function(elements, callback) {
         var value, values = [],
             i, key;
@@ -101,8 +95,6 @@ define([
         }
         return flatten(values);
     };
-
-    //>>excludeEnd('optimizerRuntime')
 
     return can;
 
