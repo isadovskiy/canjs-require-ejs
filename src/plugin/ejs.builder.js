@@ -44,7 +44,7 @@ define(['text', './ejs.includes', 'can/view/ejs'], function (text, injectInclude
         write: function (pluginName, moduleName, write) {
             if (buildMap.hasOwnProperty(moduleName)) {
                 var content = buildMap[moduleName];
-                write('define("' + pluginName + '!' + moduleName + '", ["can/view/ejs"], function (can) {' +
+                write.asModule(pluginName + '!' + moduleName, 'define(["can/view/ejs"], function (can) {' +
                     'var renderer = can.EJS(function(_CONTEXT,_VIEW) {' + content.text + '});' +
                     'renderer.id = "' + content.id +  '";' +
                     'can.view.preload(renderer.id, renderer);' +
