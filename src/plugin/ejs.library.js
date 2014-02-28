@@ -1,5 +1,8 @@
 define(['can/util/can'], function (can) {
 
+    var core_trim = String.prototype.trim;
+    var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+
     function likeArray(obj) {
         return typeof obj.length == 'number';
     }
@@ -16,10 +19,18 @@ define(['can/util/can'], function (can) {
         return typeof value === 'function';
     };
 
+    can.trim = core_trim && !core_trim.call('\uFEFF\xA0') ?
+        function (text) {
+            return text == null ? '' : core_trim.call(text);
+        } :
+        // Otherwise use our own trimming functionality
+        function (text) {
+            return text == null ? '' : ( text + '' ).replace(rtrim, '');
+        };
 
     // This extend() function is ruthlessly and shamelessly stolen from
     // jQuery 1.8.2:, lines 291-353.
-    can.extend = function() {
+    can.extend = function () {
         var options, name, src, copy, copyIsArray, clone,
             target = arguments[0] || {},
             i = 1,
@@ -27,7 +38,7 @@ define(['can/util/can'], function (can) {
             deep = false;
 
         // Handle a deep copy situation
-        if ( typeof target === "boolean" ) {
+        if (typeof target === "boolean") {
             deep = target;
             target = arguments[1] || {};
             // skip the boolean and the target
@@ -35,32 +46,32 @@ define(['can/util/can'], function (can) {
         }
 
         // Handle case when target is a string or something (possible in deep copy)
-        if ( typeof target !== "object" && !can.isFunction(target) ) {
+        if (typeof target !== "object" && !can.isFunction(target)) {
             target = {};
         }
 
         // extend jQuery itself if only one argument is passed
-        if ( length === i ) {
+        if (length === i) {
             target = this;
             --i;
         }
 
-        for ( ; i < length; i++ ) {
+        for (; i < length; i++) {
             // Only deal with non-null/undefined values
-            if ( (options = arguments[ i ]) != null ) {
+            if ((options = arguments[ i ]) != null) {
                 // Extend the base object
-                for ( name in options ) {
+                for (name in options) {
                     src = target[ name ];
                     copy = options[ name ];
 
                     // Prevent never-ending loop
-                    if ( target === copy ) {
+                    if (target === copy) {
                         continue;
                     }
 
                     // Recurse if we're merging plain objects or arrays
-                    if ( deep && copy && ( can.isPlainObject(copy) || (copyIsArray = can.isArray(copy)) ) ) {
-                        if ( copyIsArray ) {
+                    if (deep && copy && ( can.isPlainObject(copy) || (copyIsArray = can.isArray(copy)) )) {
+                        if (copyIsArray) {
                             copyIsArray = false;
                             clone = src && can.isArray(src) ? src : [];
 
@@ -69,10 +80,10 @@ define(['can/util/can'], function (can) {
                         }
 
                         // Never move original objects, clone them
-                        target[ name ] = can.extend( deep, clone, copy );
+                        target[ name ] = can.extend(deep, clone, copy);
 
                         // Don't bring in undefined values
-                    } else if ( copy !== undefined ) {
+                    } else if (copy !== undefined) {
                         target[ name ] = copy;
                     }
                 }
@@ -83,7 +94,56 @@ define(['can/util/can'], function (can) {
         return target;
     };
 
-    can.map = function(elements, callback) {
+    can.each = function (obj, callback, args) {
+        var value,
+            i = 0,
+            length = obj.length,
+            isArray = likeArray(obj);
+
+        if (args) {
+            if (isArray) {
+                for (; i < length; i++) {
+                    value = callback.apply(obj[ i ], args);
+
+                    if (value === false) {
+                        break;
+                    }
+                }
+            } else {
+                for (i in obj) {
+                    value = callback.apply(obj[ i ], args);
+
+                    if (value === false) {
+                        break;
+                    }
+                }
+            }
+
+            // A special, fast, case for the most common use of each
+        } else {
+            if (isArray) {
+                for (; i < length; i++) {
+                    value = callback.call(obj[ i ], i, obj[ i ]);
+
+                    if (value === false) {
+                        break;
+                    }
+                }
+            } else {
+                for (i in obj) {
+                    value = callback.call(obj[ i ], i, obj[ i ]);
+
+                    if (value === false) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return obj;
+    };
+
+    can.map = function (elements, callback) {
         var value, values = [],
             i, key;
         if (likeArray(elements)) for (i = 0; i < elements.length; i++) {
@@ -94,6 +154,14 @@ define(['can/util/can'], function (can) {
             if (value != null) values.push(value)
         }
         return flatten(values);
+    };
+
+    can.makeArray = function (arr) {
+        var ret = [];
+        can.each(arr, function (a, i) {
+            ret[i] = a;
+        });
+        return ret;
     };
 
     return can;
