@@ -46,9 +46,9 @@ define(['text', './ejs.includes', 'can/view/ejs'], function (text, injectInclude
                 var content = buildMap[moduleName];
                 write.asModule(pluginName + '!' + moduleName, 'define(["can/view/ejs"], function (can) {' +
                     'var renderer = can.EJS(function(_CONTEXT,_VIEW) {' + content.text + '});' +
-                    'renderer.id = "' + content.id +  '";' +
-                    'can.view.preload(renderer.id, renderer);' +
-                    'return renderer;' +
+                    'var frag = can.view.preload("' + content.id +  '", renderer);' +
+                    'frag.id = "' + content.id +  '";' +
+                    'return frag;' +
                 '});\n');
             }
         }
